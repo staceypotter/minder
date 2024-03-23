@@ -142,6 +142,7 @@ service ArtifactService {
             relation: RELATION_ARTIFACT_GET
         };
     }
+
 }
 
 message ListArtifactsRequest {
@@ -1309,6 +1310,15 @@ message GitHubAppProviderConfig {
   reserved "app_name", "app_id", "user_id";
 }
 
+// DockerHubProviderConfig contains the configuration for the DockerHub provider.
+//
+// Namespace: is the namespace for the DockerHub provider.
+//
+message DockerHubProviderConfig {
+    // namespace is the namespace for the DockerHub provider.
+    string namespace = 1;
+}
+
 // Context defines the context in which a rule is evaluated.
 // this normally refers to a combination of the provider, organization and project.
 message Context {
@@ -2096,6 +2106,9 @@ enum ProviderType {
     PROVIDER_TYPE_GIT = 3 [(name) = "git"];
     PROVIDER_TYPE_OCI = 4 [(name) = "oci"];
     PROVIDER_TYPE_REPO_LISTER = 5 [(name) = "repo-lister"];
+    PROVIDER_TYPE_IMAGE_LISTER = 6 [(name) = "image-lister"];
+    PROVIDER_TYPE_GHCR = 7 [(name) = "ghcr"];
+    PROVIDER_TYPE_DOCKERHUB = 8 [(name) = "dockerhub"];
 }
 
 enum ProviderClass {

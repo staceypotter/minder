@@ -619,6 +619,19 @@ DiffType defines the diff data ingester.
 | depfile | [string](#string) |  | depfile is the file that contains the dependencies for this ecosystem |
 
 
+<a name="minder-v1-DockerHubProviderConfig"></a>
+
+#### DockerHubProviderConfig
+DockerHubProviderConfig contains the configuration for the DockerHub provider.
+
+Namespace: is the namespace for the DockerHub provider.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| namespace | [string](#string) |  | namespace is the namespace for the DockerHub provider. |
+
+
 <a name="minder-v1-EntityTypedId"></a>
 
 #### EntityTypedId
@@ -2257,6 +2270,9 @@ ProviderTrait is the type of the provider.
 | PROVIDER_TYPE_GIT | 3 |  |
 | PROVIDER_TYPE_OCI | 4 |  |
 | PROVIDER_TYPE_REPO_LISTER | 5 |  |
+| PROVIDER_TYPE_IMAGE_LISTER | 6 |  |
+| PROVIDER_TYPE_GHCR | 7 |  |
+| PROVIDER_TYPE_DOCKERHUB | 8 |  |
 
 
 <a name="minder-v1-Relation"></a>

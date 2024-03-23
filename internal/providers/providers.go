@@ -31,11 +31,14 @@ import (
 	"github.com/stacklok/minder/internal/crypto"
 	"github.com/stacklok/minder/internal/db"
 	"github.com/stacklok/minder/internal/providers/credentials"
+	"github.com/stacklok/minder/internal/providers/dockerhub"
 	gitclient "github.com/stacklok/minder/internal/providers/git"
 	githubapp "github.com/stacklok/minder/internal/providers/github/app"
 	"github.com/stacklok/minder/internal/providers/github/clients"
+	"github.com/stacklok/minder/internal/providers/github/ghcr"
 	ghclient "github.com/stacklok/minder/internal/providers/github/oauth"
 	httpclient "github.com/stacklok/minder/internal/providers/http"
+	"github.com/stacklok/minder/internal/providers/oci"
 	"github.com/stacklok/minder/internal/providers/ratecache"
 	"github.com/stacklok/minder/internal/providers/telemetry"
 	minderv1 "github.com/stacklok/minder/pkg/api/protobuf/go/minder/v1"
@@ -261,6 +264,81 @@ func (pb *ProviderBuilder) GetRepoLister() (provinfv1.RepoLister, error) {
 	return nil, fmt.Errorf("provider does not implement repo lister")
 }
 
+// GetGHCR returns a GHCR client for the provider.
+func (pb *ProviderBuilder) GetGHCR() (provinfv1.ImageLister, error) {
+	if !pb.Implements(db.ProviderTypeImageLister) {
+		return nil, fmt.Errorf("provider does not implement ghcr")
+	}
+
+	if pb.p.Version != provinfv1.V1 {
+		return nil, fmt.Errorf("provider version not supported")
+	}
+
+	oauth2cred, ok := pb.credential.(provinfv1.OAuth2TokenCredential)
+	if !ok {
+		return nil, fmt.Errorf("credential is not an oauth2 token credential")
+	}
+
+	// TODO: Use config and not hardcode namespace
+	return ghcr.New(oauth2cred, "jaormx"), nil
+}
+
+// GetDockerHub returns a DockerHub client for the provider.
+func (pb *ProviderBuilder) GetDockerHub() (provinfv1.ImageLister, error) {
+	if !pb.Implements(db.ProviderTypeImageLister) {
+		return nil, fmt.Errorf("provider does not implement dockerhub")
+	}
+
+	if pb.p.Version != provinfv1.V1 {
+		return nil, fmt.Errorf("provider version not supported")
+	}
+
+	cfg, err := dockerhub.ParseV1Config(pb.p.Definition)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing dockerhub config: %w", err)
+	}
+
+	oauth2cred, ok := pb.credential.(provinfv1.OAuth2TokenCredential)
+	if !ok {
+		return nil, fmt.Errorf("credential is not an oauth2 token credential")
+	}
+
+	return dockerhub.New(oauth2cred, cfg)
+}
+
+// GetOCI returns an OCI client for the provider.
+func (pb *ProviderBuilder) GetOCI() (provinfv1.OCI, error) {
+	if !pb.Implements(db.ProviderTypeOci) {
+		return nil, fmt.Errorf("provider does not implement oci")
+	}
+
+	if pb.p.Version != provinfv1.V1 {
+		return nil, fmt.Errorf("provider version not supported")
+	}
+
+	var repo string
+
+	//nolint:exhaustive // we only support two providers for OCI registries
+	switch pb.p.Class {
+	case dockerhub.DockerHub:
+		d, err := pb.GetDockerHub()
+		if err != nil {
+			return nil, fmt.Errorf("error getting dockerhub client: %w", err)
+		}
+		repo = d.GetNamespaceURL()
+	case ghcr.GHCR:
+		g, err := pb.GetGHCR()
+		if err != nil {
+			return nil, fmt.Errorf("error getting ghcr client: %w", err)
+		}
+		repo = g.GetNamespaceURL()
+	default:
+		return nil, fmt.Errorf("provider class not supported")
+	}
+
+	return oci.New(pb.credential, repo), nil
+}
+
 // DBToPBType converts a database provider type to a protobuf provider type.
 func DBToPBType(t db.ProviderType) (minderv1.ProviderType, bool) {
 	switch t {
@@ -274,6 +352,12 @@ func DBToPBType(t db.ProviderType) (minderv1.ProviderType, bool) {
 		return minderv1.ProviderType_PROVIDER_TYPE_REPO_LISTER, true
 	case db.ProviderTypeOci:
 		return minderv1.ProviderType_PROVIDER_TYPE_OCI, true
+	case db.ProviderTypeImageLister:
+		return minderv1.ProviderType_PROVIDER_TYPE_IMAGE_LISTER, true
+	case db.ProviderTypeGhcr:
+		return minderv1.ProviderType_PROVIDER_TYPE_GHCR, true
+	case db.ProviderTypeDockerhub:
+		return minderv1.ProviderType_PROVIDER_TYPE_DOCKERHUB, true
 	default:
 		return minderv1.ProviderType_PROVIDER_TYPE_UNSPECIFIED, false
 	}
