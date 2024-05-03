@@ -34,6 +34,27 @@ import (
 	minderv1 "github.com/stacklok/minder/pkg/api/protobuf/go/minder/v1"
 )
 
+func (s *Server) CreateProvider(ctx context.Context, req *minderv1.CreateProviderRequest) (*minderv1.CreateProviderResponse, error) {
+	entityCtx := engine.EntityFromContext(ctx)
+	projectID := entityCtx.Project.ID
+
+	// serialize the config
+	cfg := req.GetProvider().GetConfig()
+
+	name := req.GetProvider().GetName()
+	if name == "" {
+		return nil, util.UserVisibleError(codes.InvalidArgument, "provider name not given")
+	}
+
+	class := req.GetProvider().GetClass()
+	if class == "" {
+		return nil, util.UserVisibleError(codes.InvalidArgument, "provider class not given")
+	}
+
+	s.providerManager.Create(ctx, projectID, name, class, cfg)
+	return nil, nil
+}
+
 // GetProvider gets a given provider available in a specific project.
 func (s *Server) GetProvider(ctx context.Context, req *minderv1.GetProviderRequest) (*minderv1.GetProviderResponse, error) {
 	entityCtx := engine.EntityFromContext(ctx)

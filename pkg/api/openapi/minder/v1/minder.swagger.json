@@ -2959,8 +2959,7 @@
           "description": "context is the context in which the provider is created."
         },
         "provider": {
-          "$ref": "#/definitions/v1Provider",
-          "description": "provider is the provider to be created."
+          "$ref": "#/definitions/v1Provider"
         }
       }
     },

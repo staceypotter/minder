@@ -359,7 +359,7 @@ Profile service
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | context | [Context](#minder-v1-Context) |  | context is the context in which the provider is created. |
-| provider | [Provider](#minder-v1-Provider) |  | provider is the provider to be created. |
+| provider | [Provider](#minder-v1-Provider) |  |  |
 
 
 <a name="minder-v1-CreateProviderResponse"></a>

@@ -8155,8 +8155,7 @@ type CreateProviderRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// context is the context in which the provider is created.
-	Context *Context `protobuf:"bytes,1,opt,name=context,proto3" json:"context,omitempty"`
-	// provider is the provider to be created.
+	Context  *Context  `protobuf:"bytes,1,opt,name=context,proto3" json:"context,omitempty"`
 	Provider *Provider `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
 }
 

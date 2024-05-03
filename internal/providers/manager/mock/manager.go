@@ -17,6 +17,7 @@ import (
 	db "github.com/stacklok/minder/internal/db"
 	v1 "github.com/stacklok/minder/pkg/providers/v1"
 	gomock "go.uber.org/mock/gomock"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 )
 
 // MockProviderManager is a mock of ProviderManager interface.
@@ -56,6 +57,21 @@ func (m *MockProviderManager) BulkInstantiateByTrait(ctx context.Context, projec
 func (mr *MockProviderManagerMockRecorder) BulkInstantiateByTrait(ctx, projectID, trait, name any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkInstantiateByTrait", reflect.TypeOf((*MockProviderManager)(nil).BulkInstantiateByTrait), ctx, projectID, trait, name)
+}
+
+// Create mocks base method.
+func (m *MockProviderManager) Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, projectID, name, class, definition)
+	ret0, _ := ret[0].(v1.Provider)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockProviderManagerMockRecorder) Create(ctx, projectID, name, class, definition any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProviderManager)(nil).Create), ctx, projectID, name, class, definition)
 }
 
 // DeleteByID mocks base method.
@@ -152,6 +168,21 @@ func (m *MockProviderClassManager) Build(ctx context.Context, config *db.Provide
 func (mr *MockProviderClassManagerMockRecorder) Build(ctx, config any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Build", reflect.TypeOf((*MockProviderClassManager)(nil).Build), ctx, config)
+}
+
+// Create mocks base method.
+func (m *MockProviderClassManager) Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, projectID, name, class, definition)
+	ret0, _ := ret[0].(v1.Provider)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockProviderClassManagerMockRecorder) Create(ctx, projectID, name, class, definition any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProviderClassManager)(nil).Create), ctx, projectID, name, class, definition)
 }
 
 // Delete mocks base method.
