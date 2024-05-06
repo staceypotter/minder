@@ -25,7 +25,6 @@ import (
 	gogithub "github.com/google/go-github/v61/github"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
-	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/stacklok/minder/internal/config/server"
 	"github.com/stacklok/minder/internal/crypto"
@@ -83,11 +82,6 @@ var (
 		db.ProviderClassGithub,
 	}
 )
-
-// Create creates a new instance of the Provider
-func (g *githubProviderManager) Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error) {
-	return nil, errors.New("not implemented")
-}
 
 func (_ *githubProviderManager) GetSupportedClasses() []db.ProviderClass {
 	return supportedClasses

@@ -22,7 +22,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
-	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/stacklok/minder/internal/db"
 	"github.com/stacklok/minder/internal/providers"
@@ -58,16 +57,12 @@ type ProviderManager interface {
 	// Deletion will only occur if the provider is in the specified project -
 	// it will not attempt to find a provider elsewhere in the hierarchy.
 	DeleteByName(ctx context.Context, name string, projectID uuid.UUID) error
-	// Create creates a new instance of the Provider
-	Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error)
 }
 
 // ProviderClassManager describes an interface for creating instances of a
 // specific Provider class. The idea is that ProviderManager determines the
 // class of the Provider, and delegates to the appropraite ProviderClassManager
 type ProviderClassManager interface {
-	// Create creates and stores a new instance of the Provider
-	Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error)
 	// Build creates an instance of Provider based on the config in the DB
 	Build(ctx context.Context, config *db.Provider) (v1.Provider, error)
 	// Delete deletes an instance of this provider
@@ -172,19 +167,6 @@ func (p *providerManager) DeleteByName(ctx context.Context, name string, project
 	}
 
 	return p.deleteByRecord(ctx, config)
-}
-
-func (p *providerManager) Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error) {
-	manager, ok := p.classManagers[db.ProviderClass(name)]
-	if !ok {
-		return nil, fmt.Errorf("unexpected provider class: %s", name)
-	}
-	pr, err := manager.Create(ctx, projectID, name, class, definition)
-	if err != nil {
-		return nil, fmt.Errorf("error creating provider: %w", err)
-	}
-
-	return pr, nil
 }
 
 func (p *providerManager) deleteByRecord(ctx context.Context, config *db.Provider) error {

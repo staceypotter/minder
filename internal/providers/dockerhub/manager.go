@@ -21,12 +21,10 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/google/uuid"
 	"github.com/stacklok/minder/internal/crypto"
 	"github.com/stacklok/minder/internal/db"
 	"github.com/stacklok/minder/internal/providers/credentials"
 	v1 "github.com/stacklok/minder/pkg/providers/v1"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type providerClassManager struct {
@@ -34,6 +32,7 @@ type providerClassManager struct {
 	crypteng crypto.Engine
 }
 
+// NewDockerHubProviderClassManager creates a new provider class manager for the dockerhub provider
 func NewDockerHubProviderClassManager(crypteng crypto.Engine, store db.Store) *providerClassManager {
 	return &providerClassManager{
 		store:    store,
@@ -44,11 +43,6 @@ func NewDockerHubProviderClassManager(crypteng crypto.Engine, store db.Store) *p
 // GetSupportedClasses implements the ProviderClassManager interface
 func (_ *providerClassManager) GetSupportedClasses() []db.ProviderClass {
 	return []db.ProviderClass{db.ProviderClassDockerhub}
-}
-
-// Create implements the ProviderClassManager interface
-func (g *providerClassManager) Create(ctx context.Context, projectID uuid.UUID, name, class string, definition *structpb.Struct) (v1.Provider, error) {
-	return nil, nil
 }
 
 // Build implements the ProviderClassManager interface
@@ -84,7 +78,8 @@ func (g *providerClassManager) Build(ctx context.Context, config *db.Provider) (
 }
 
 // Delete implements the ProviderClassManager interface
-func (m *providerClassManager) Delete(ctx context.Context, config *db.Provider) error {
+// TODO: Implement this
+func (_ *providerClassManager) Delete(_ context.Context, _ *db.Provider) error {
 	return nil
 }
 

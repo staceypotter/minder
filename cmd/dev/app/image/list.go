@@ -34,7 +34,7 @@ import (
 func CmdList() *cobra.Command {
 	var listCmd = &cobra.Command{
 		Use:          "list",
-		Short:        "list containers",
+		Short:        "list images",
 		RunE:         runCmdList,
 		SilenceUsage: true,
 	}
@@ -82,7 +82,7 @@ func runCmdList(cmd *cobra.Command, _ []string) error {
 		}
 	case "ghcr":
 		cred := credentials.NewOAuth2TokenCredential(viper.GetString("auth.token"))
-		prov = ghcr.New(cred, "jaormx")
+		prov = ghcr.New(cred, ns.Value.String())
 	default:
 		return fmt.Errorf("unknown provider: %s", pclass.Value.String())
 	}
