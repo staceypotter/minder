@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package container provides the root command for the container subcommands
-package container
+// Package image provides the root command for the image subcommands
+package image
 
 import "github.com/spf13/cobra"
 
-// CmdContainer is the root command for the container subcommands
-func CmdContainer() *cobra.Command {
+// CmdImage is the root command for the container subcommands
+func CmdImage() *cobra.Command {
 	var rtCmd = &cobra.Command{
-		Use:   "container",
-		Short: "container provides utilities to test minder container support",
+		Use:   "image",
+		Short: "image provides utilities to test minder container image support",
 	}
 
 	rtCmd.AddCommand(CmdVerify())

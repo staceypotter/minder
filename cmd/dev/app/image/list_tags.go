@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package container provides the root command for the container subcommands
-package container
+package image
 
 import (
 	"context"

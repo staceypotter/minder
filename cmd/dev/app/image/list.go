@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package container provides the root command for the container subcommands
-package container
+package image
 
 import (
 	"context"
@@ -27,6 +26,7 @@ import (
 	"github.com/stacklok/minder/internal/providers/credentials"
 	"github.com/stacklok/minder/internal/providers/dockerhub"
 	"github.com/stacklok/minder/internal/providers/github/ghcr"
+	minderv1 "github.com/stacklok/minder/pkg/api/protobuf/go/minder/v1"
 	provifv1 "github.com/stacklok/minder/pkg/providers/v1"
 )
 
@@ -40,6 +40,7 @@ func CmdList() *cobra.Command {
 	}
 
 	listCmd.Flags().StringP("provider", "p", "", "provider class to use for listing containers")
+	listCmd.Flags().StringP("namespace", "n", "", "namespace to list containers from")
 	//nolint:goconst // let's not use a const for this one
 	listCmd.Flags().StringP("token", "t", "", "token to authenticate to the provider."+
 		//nolint:goconst // let's not use a const for this one
@@ -60,13 +61,22 @@ func runCmdList(cmd *cobra.Command, _ []string) error {
 
 	// get the provider
 	pclass := cmd.Flag("provider")
+	if pclass.Value.String() == "" {
+		return fmt.Errorf("provider class is required")
+	}
+	ns := cmd.Flag("namespace")
+	if ns.Value.String() == "" {
+		return fmt.Errorf("namespace is required")
+	}
 
 	var prov provifv1.ImageLister
 	switch pclass.Value.String() {
 	case "dockerhub":
 		var err error
 		cred := credentials.NewOAuth2TokenCredential(viper.GetString("auth.token"))
-		prov, err = dockerhub.New(cred, "devopsfaith")
+		prov, err = dockerhub.New(cred, &minderv1.DockerHubProviderConfig{
+			Namespace: ns.Value.String(),
+		})
 		if err != nil {
 			return err
 		}
