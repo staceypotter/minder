@@ -289,8 +289,6 @@ const (
 	ProviderTypeOci         ProviderType = "oci"
 	ProviderTypeRepoLister  ProviderType = "repo-lister"
 	ProviderTypeImageLister ProviderType = "image-lister"
-	ProviderTypeGhcr        ProviderType = "ghcr"
-	ProviderTypeDockerhub   ProviderType = "dockerhub"
 )
 
 func (e *ProviderType) Scan(src interface{}) error {

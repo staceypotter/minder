@@ -35,7 +35,6 @@ const DockerHub = "dockerhub"
 
 // Implements is the list of provider types that the DockerHub provider implements
 var Implements = []db.ProviderType{
-	db.ProviderTypeDockerhub,
 	db.ProviderTypeImageLister,
 	db.ProviderTypeOci,
 }
@@ -118,6 +117,8 @@ func (d *dockerHubImageLister) ListImages(ctx context.Context) ([]string, error)
 		return nil, fmt.Errorf("error making request: %w", err)
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusUnauthorized {
 			return nil, fmt.Errorf("unauthorized: %s", resp.Status)
@@ -127,9 +128,6 @@ func (d *dockerHubImageLister) ListImages(ctx context.Context) ([]string, error)
 		}
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
-
-	// read body
-	defer resp.Body.Close()
 
 	// parse body
 	toParse := struct {

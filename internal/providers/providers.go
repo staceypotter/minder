@@ -267,7 +267,7 @@ func (pb *ProviderBuilder) GetRepoLister() (provinfv1.RepoLister, error) {
 // GetGHCR returns a GHCR client for the provider.
 func (pb *ProviderBuilder) GetGHCR() (provinfv1.ImageLister, error) {
 	if !pb.Implements(db.ProviderTypeImageLister) {
-		return nil, fmt.Errorf("provider does not implement ghcr")
+		return nil, fmt.Errorf("provider does not implement image-lister")
 	}
 
 	if pb.p.Version != provinfv1.V1 {
@@ -286,7 +286,7 @@ func (pb *ProviderBuilder) GetGHCR() (provinfv1.ImageLister, error) {
 // GetDockerHub returns a DockerHub client for the provider.
 func (pb *ProviderBuilder) GetDockerHub() (provinfv1.ImageLister, error) {
 	if !pb.Implements(db.ProviderTypeImageLister) {
-		return nil, fmt.Errorf("provider does not implement dockerhub")
+		return nil, fmt.Errorf("provider does not implement image-lister")
 	}
 
 	if pb.p.Version != provinfv1.V1 {
@@ -354,10 +354,6 @@ func DBToPBType(t db.ProviderType) (minderv1.ProviderType, bool) {
 		return minderv1.ProviderType_PROVIDER_TYPE_OCI, true
 	case db.ProviderTypeImageLister:
 		return minderv1.ProviderType_PROVIDER_TYPE_IMAGE_LISTER, true
-	case db.ProviderTypeGhcr:
-		return minderv1.ProviderType_PROVIDER_TYPE_GHCR, true
-	case db.ProviderTypeDockerhub:
-		return minderv1.ProviderType_PROVIDER_TYPE_DOCKERHUB, true
 	default:
 		return minderv1.ProviderType_PROVIDER_TYPE_UNSPECIFIED, false
 	}

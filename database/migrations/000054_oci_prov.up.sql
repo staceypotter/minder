@@ -13,8 +13,6 @@
 -- limitations under the License.
 
 ALTER TYPE provider_type ADD VALUE 'image-lister';
-ALTER TYPE provider_type ADD VALUE 'ghcr';
-ALTER TYPE provider_type ADD VALUE 'dockerhub';
 
 -- Add `ghcr` and `dockerhub` provider classes
 ALTER TYPE provider_class ADD VALUE 'ghcr';
